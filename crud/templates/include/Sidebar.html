@@ -13,7 +13,7 @@
         <p class="px-3 mb-1 text-xs font-semibold text-gray-400 uppercase tracking-wider">Gender</p>
         <ul class="space-y-1 mb-4">
             <li>
-                <a href="/gender/list" 
+               href="{% url 'gender_list' %}"
                    style="display:block; padding:10px 16px; border-radius:8px; text-decoration:none; color:#374151; font-weight:500;"
                    onmouseover="this.style.background='#EFF6FF'; this.style.color='#1D4ED8';"
                    onmouseout="this.style.background=''; this.style.color='#374151';">
@@ -26,7 +26,7 @@
                 </a>
             </li>
             <li>
-                <a href="/gender/add" 
+                href="{% url 'add_gender' %}"
                    style="display:block; padding:10px 16px; border-radius:8px; text-decoration:none; color:#374151; font-weight:500;"
                    onmouseover="this.style.background='#EFF6FF'; this.style.color='#1D4ED8';"
                    onmouseout="this.style.background=''; this.style.color='#374151';">
@@ -44,7 +44,7 @@
         <p class="px-3 mb-1 text-xs font-semibold text-gray-400 uppercase tracking-wider">User</p>
         <ul class="space-y-1">
             <li>
-                <a href="/user/list" 
+                <a href="{% url 'user_list' %}"
                    style="display:block; padding:10px 16px; border-radius:8px; text-decoration:none; color:#374151; font-weight:500;"
                    onmouseover="this.style.background='#EFF6FF'; this.style.color='#1D4ED8';"
                    onmouseout="this.style.background=''; this.style.color='#374151';">
@@ -57,7 +57,7 @@
                 </a>
             </li>
             <li>
-                <a href="/user/add" 
+                <a href="{% url 'add_user' %}"
                    style="display:block; padding:10px 16px; border-radius:8px; text-decoration:none; color:#374151; font-weight:500;"
                    onmouseover="this.style.background='#EFF6FF'; this.style.color='#1D4ED8';"
                    onmouseout="this.style.background=''; this.style.color='#374151';">

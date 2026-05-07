@@ -1,7 +1,10 @@
+from urllib import request
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib import messages
 from .models import Genders
+from .models import Genders, Users
+from django.contrib.auth.hashers import make_password
 
 def gender_list(request):
     try:
@@ -54,3 +57,87 @@ def delete_gender(request, pk):
             return render(request, 'gender/DeleteGender.html', {'gender': gender_obj})
     except Exception as e:
         return HttpResponse(f"Error occurred during delete gender: {e}")
+
+def user_list(request):
+    try:
+        users_data = Users.objects.select_related('gender').all().order_by('user_id')
+        data = {'users': users_data}
+        return render(request, 'user/UserList.html', data)
+    except Exception as e:
+        return HttpResponse(f"Error occurred: {e}")
+
+def add_user(request):
+    try:
+        genders = Genders.objects.all().order_by('gender')
+        if request.method == 'POST':
+            full_name = request.POST.get('full_name')
+            email = request.POST.get('email')
+            gender_id = request.POST.get('gender')
+            username = request.POST.get('username')
+            birth_date = request.POST.get('birth_date')
+            password = request.POST.get('password')
+            confirm_password = request.POST.get('confirm_password')
+            address = request.POST.get('address')
+            contact_number = request.POST.get('contact_number')
+
+            if password != confirm_password:
+                messages.error(request, 'Passwords do not match.')
+                return render(request, 'user/AddUser.html', {'genders': genders})
+
+            gender_obj = Genders.objects.get(gender_id=gender_id)
+            Users.objects.create(
+                full_name=full_name,
+                email=email,
+                gender=gender_obj,
+                username=username,
+                birth_date=birth_date,
+                password=make_password(password), 
+                address=address,
+                contact_number=contact_number,
+            )
+            messages.success(request, 'User added successfully!')
+            return redirect('/user/list')
+        return render(request, 'user/AddUser.html', {'genders': genders})
+    except Exception as e:
+        return HttpResponse(f"Error occurred during add user: {e}")
+    
+def edit_user(request, pk):
+    try:
+        user_obj = Users.objects.get(user_id=pk)
+        genders = Genders.objects.all().order_by('gender')
+        if request.method == 'POST':
+            user_obj.full_name = request.POST.get('full_name')
+            user_obj.email = request.POST.get('email')
+            gender_id = request.POST.get('gender')
+            user_obj.gender = Genders.objects.get(gender_id=gender_id)
+            user_obj.username = request.POST.get('username')
+            user_obj.birth_date = request.POST.get('birth_date')
+            user_obj.address = request.POST.get('address')
+            user_obj.contact_number = request.POST.get('contact_number')
+
+            new_password = request.POST.get('password')
+            confirm_password = request.POST.get('confirm_password')
+            if new_password:
+                if new_password != confirm_password:
+                    messages.error(request, 'Passwords do not match.')
+                    return render(request, 'user/EditUser.html', {'user': user_obj, 'genders': genders})
+                user_obj.password = make_password(new_password)
+
+            user_obj.save()
+            messages.success(request, 'User updated successfully!')
+            return redirect('/user/list')
+        return render(request, 'user/EditUser.html', {'user': user_obj, 'genders': genders})
+    except Exception as e:
+        return HttpResponse(f"Error occurred during edit user: {e}")
+
+
+def delete_user(request, pk):
+    try:
+        user_obj = Users.objects.get(user_id=pk)
+        if request.method == 'POST':
+            user_obj.delete()
+            messages.success(request, 'User deleted successfully!')
+            return redirect('/user/list')
+        return render(request, 'user/DeleteUser.html', {'user': user_obj})
+    except Exception as e:
+        return HttpResponse(f"Error occurred during delete user: {e}")

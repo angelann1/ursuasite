@@ -23,7 +23,7 @@ class Users (models.Model):
     contact_number = models.CharField(max_length=20, blank=False) # contact_number VARCHAR(20) NOT NULL
     email = models.EmailField(max_length=255, blank=True) # email VARCHAR(255) DEFAULT NULL
     username = models.CharField(max_length=255, blank=False, unique=True) # username VARCHAR(255) NOT NULL UNIQUE
-    password = models.CharField (max_length = 255, blank =False) # password VARCHAR(255) NOT NULL
+    password = models.CharField(max_length=255, blank=False) # password VARCHAR(255) NOT NULL
     created_at = models.DateTimeField(auto_now_add=True) # created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     updated_at = models.DateTimeField(auto_now=True) # updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 
