@@ -1,15 +1,113 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{% static 'css/output.css' %}">  
-    <title>{% block 'title' %} {% endblock 'title' %}</title>
+    <title>{% block title %}Flowbite Django{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to   { opacity: 0; transform: translateY(-10px); }
+        }
+        .toast-enter { animation: slideDown 0.4s ease forwards; }
+        .toast-exit  { animation: fadeOut 0.5s ease forwards; }
+    </style>
 </head>
-<body>
-   
-    {% block 'content' %} {% endblock 'content' %}
-       
+<body class="bg-gray-50 text-gray-900">
+
+    {% include "include/Navbar.html" %}
+
+    <div style="display:flex; padding-top:64px;">
+        
+        <!-- Sidebar -->
+        <aside style="position:fixed; top:0; left:0; width:256px; height:100vh; padding-top:64px; background:white; border-right:1px solid #e5e7eb; z-index:20; overflow-y:auto;">
+            <div style="padding:16px 12px;">
+
+
+                <!-- Gender -->
+                <p style="font-size:11px; font-weight:600; color:#9ca3af; text-transform:uppercase; letter-spacing:0.05em; padding:0 12px; margin-bottom:6px;">Gender</p>
+                
+                <a href="/gender/list" style="display:flex; align-items:center; gap:8px; padding:10px 12px; border-radius:8px; text-decoration:none; color:#374151; font-weight:500; margin-bottom:2px; cursor:pointer;"
+                   onmouseover="this.style.background='#EFF6FF'; this.style.color='#1D4ED8';"
+                   onmouseout="this.style.background='transparent'; this.style.color='#374151';">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
+                    </svg>
+                    Gender List
+                </a>
+
+                <a href="/gender/add" style="display:flex; align-items:center; gap:8px; padding:10px 12px; border-radius:8px; text-decoration:none; color:#374151; font-weight:500; margin-bottom:16px; cursor:pointer;"
+                   onmouseover="this.style.background='#EFF6FF'; this.style.color='#1D4ED8';"
+                   onmouseout="this.style.background='transparent'; this.style.color='#374151';">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                    </svg>
+                    Add Gender
+                </a>
+
+                <!-- User -->
+                <p style="font-size:11px; font-weight:600; color:#9ca3af; text-transform:uppercase; letter-spacing:0.05em; padding:0 12px; margin-bottom:6px;">User</p>
+
+                <a href="/user/list" style="display:flex; align-items:center; gap:8px; padding:10px 12px; border-radius:8px; text-decoration:none; color:#374151; font-weight:500; margin-bottom:2px; cursor:pointer;"
+                   onmouseover="this.style.background='#EFF6FF'; this.style.color='#1D4ED8';"
+                   onmouseout="this.style.background='transparent'; this.style.color='#374151';">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0"/>
+                    </svg>
+                    User List
+                </a>
+
+                <a href="/user/add" style="display:flex; align-items:center; gap:8px; padding:10px 12px; border-radius:8px; text-decoration:none; color:#374151; font-weight:500; cursor:pointer;"
+                   onmouseover="this.style.background='#EFF6FF'; this.style.color='#1D4ED8';"
+                   onmouseout="this.style.background='transparent'; this.style.color='#374151';">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
+                    </svg>
+                    Add User
+                </a>
+
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main style="margin-left:256px; width:calc(100% - 256px); min-height:calc(100vh - 64px); padding:24px; background:#f9fafb;">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container" style="position:fixed; top:80px; left:50%; transform:translateX(-50%); z-index:9999; display:flex; flex-direction:column; gap:8px; width:100%; max-width:360px; padding:0 16px;">
+        {% if messages %}
+            {% for message in messages %}
+                {% include "include/ToastMessage.html" with message=message %}
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const toasts = document.querySelectorAll('.toast-item');
+            toasts.forEach(function (toast) {
+                toast.classList.add('toast-enter');
+                setTimeout(function () {
+                    toast.classList.add('toast-exit');
+                    setTimeout(function () { toast.remove(); }, 500);
+                }, 3000);
+            });
+        });
+
+        function closeToast(btn) {
+            const toast = btn.closest('.toast-item');
+            toast.classList.add('toast-exit');
+            setTimeout(function () { toast.remove(); }, 500);
+        }
+    </script>
 </body>
 </html>
