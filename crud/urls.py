@@ -1,6 +1,8 @@
 from django.urls import path
 from django.shortcuts import redirect
 from . import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('', lambda request: redirect('/gender/list'), name='home'),
@@ -14,7 +16,7 @@ urlpatterns = [
     path('user/add', views.add_user, name='add_user'),
     path('user/edit/<int:pk>', views.edit_user, name='edit_user'), 
     path('user/delete/<int:pk>', views.delete_user, name='delete_user'),
-    
+    path('user/check-username', views.check_username, name='check_username'),
     
     # With slash (for browser auto-redirect)
     path('gender/list/', views.gender_list),
@@ -25,4 +27,4 @@ urlpatterns = [
     path('user/list/', views.user_list),
     path('user/edit/<int:pk>/', views.edit_user),
     path('user/delete/<int:pk>/', views.delete_user),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

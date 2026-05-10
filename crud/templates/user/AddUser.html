@@ -1,13 +1,33 @@
-
 {% extends 'layout/base.html' %}
 {% block title %}Add User{% endblock %}
 {% block content %}
-{% include 'include/ToastMessage.html' %}
 
 <div style="padding: 30px 40px;">
 
-  <form method="POST" action="{% url 'add_user' %}">
+  <form method="post" action="{% url 'add_user' %}" enctype="multipart/form-data">
     {% csrf_token %}
+
+    <!-- Profile Picture - Centered at top (same as EditUser) -->
+    <div style="display:flex; flex-direction:column; align-items:center; margin-bottom:28px;">
+      <div id="avatarPlaceholder" style="width:96px; height:96px; border-radius:50%; background:#fce7f3; display:flex; align-items:center; justify-content:center; font-size:32px; font-weight:700; color:#ec4899;">
+        👤
+      </div>
+      <img id="avatarPreview" style="display:none; width:96px; height:96px; border-radius:50%; object-fit:cover; border:3px solid #f9a8d4;">
+
+      <label style="margin-top:10px; font-size:13px; font-weight:500; color:#ec4899;">
+        Profile Picture <span style="color:#9ca3af; font-weight:400;">(optional)</span>
+      </label>
+
+      <!-- Custom File Button -->
+      <label for="profile_picture"
+        style="margin-top:8px; cursor:pointer; background:linear-gradient(to right, #f472b6, #a855f7); color:#fff; padding:8px 20px; border-radius:20px; font-size:12px; font-weight:600; display:inline-flex; align-items:center; gap:6px; transition: opacity 0.2s;"
+        onmouseover="this.style.opacity='0.85'"
+        onmouseout="this.style.opacity='1'">
+        Choose Photo
+      </label>
+      <input type="file" name="profile_picture" id="profile_picture" accept="image/*" style="display:none;" />
+      <p id="fileName" style="font-size:12px; color:#9ca3af; margin-top:4px;">No file chosen</p>
+    </div>
 
     <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px 40px;">
 
@@ -15,16 +35,16 @@
       <div>
         <label style="display:block; font-size:13px; font-weight:500; color:#374151; margin-bottom:6px;">Full Name</label>
         <input type="text" name="full_name" required
-          style="width:100%; padding:9px 12px; border:1px solid #d1d5db; border-radius:6px; font-size:13px; color:#111; box-sizing:border-box; outline:none;"
-          onfocus="this.style.borderColor='#2563eb'" onblur="this.style.borderColor='#d1d5db'" />
+          style="width:100%; padding:9px 12px; border:1px solid #f9a8d4; border-radius:6px; font-size:13px; color:#111; box-sizing:border-box; outline:none;"
+          onfocus="this.style.borderColor='#ec4899'" onblur="this.style.borderColor='#f9a8d4'" />
       </div>
 
       <!-- Email -->
       <div>
         <label style="display:block; font-size:13px; font-weight:500; color:#374151; margin-bottom:6px;">Email</label>
         <input type="email" name="email"
-          style="width:100%; padding:9px 12px; border:1px solid #d1d5db; border-radius:6px; font-size:13px; color:#111; box-sizing:border-box; outline:none;"
-          onfocus="this.style.borderColor='#2563eb'" onblur="this.style.borderColor='#d1d5db'" />
+          style="width:100%; padding:9px 12px; border:1px solid #f9a8d4; border-radius:6px; font-size:13px; color:#111; box-sizing:border-box; outline:none;"
+          onfocus="this.style.borderColor='#ec4899'" onblur="this.style.borderColor='#f9a8d4'" />
       </div>
 
       <!-- Gender -->
@@ -32,15 +52,14 @@
         <label style="display:block; font-size:13px; font-weight:500; color:#374151; margin-bottom:6px;">Gender</label>
         <div style="position:relative;">
           <select name="gender" required
-            style="width:100%; padding:9px 36px 9px 12px; border:1px solid #d1d5db; border-radius:6px; font-size:13px; color:#111; background:#fff; appearance:none; -webkit-appearance:none; box-sizing:border-box; outline:none; cursor:pointer;"
-            onfocus="this.style.borderColor='#2563eb'" onblur="this.style.borderColor='#d1d5db'">
+            style="width:100%; padding:9px 36px 9px 12px; border:1px solid #f9a8d4; border-radius:6px; font-size:13px; color:#111; background:#fff; appearance:none; -webkit-appearance:none; box-sizing:border-box; outline:none; cursor:pointer;"
+            onfocus="this.style.borderColor='#ec4899'" onblur="this.style.borderColor='#f9a8d4'">
             <option value="" disabled selected>Select Gender</option>
             {% for g in genders %}
               <option value="{{ g.gender_id }}">{{ g.gender }}</option>
             {% endfor %}
           </select>
-          <!-- Dropdown arrow -->
-          <span style="position:absolute; right:12px; top:50%; transform:translateY(-50%); pointer-events:none; color:#6b7280;">
+          <span style="position:absolute; right:12px; top:50%; transform:translateY(-50%); pointer-events:none; color:#ec4899;">
             <svg style="width:14px;height:14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
             </svg>
@@ -52,74 +71,165 @@
       <div>
         <label style="display:block; font-size:13px; font-weight:500; color:#374151; margin-bottom:6px;">Username</label>
         <input type="text" name="username" required
-          style="width:100%; padding:9px 12px; border:1px solid #d1d5db; border-radius:6px; font-size:13px; color:#111; box-sizing:border-box; outline:none;"
-          onfocus="this.style.borderColor='#2563eb'" onblur="this.style.borderColor='#d1d5db'" />
+          style="width:100%; padding:9px 12px; border:1px solid #f9a8d4; border-radius:6px; font-size:13px; color:#111; box-sizing:border-box; outline:none;"
+          onfocus="this.style.borderColor='#ec4899'" onblur="this.style.borderColor='#f9a8d4'" />
       </div>
 
       <!-- Birth Date -->
       <div>
         <label style="display:block; font-size:13px; font-weight:500; color:#374151; margin-bottom:6px;">Birth Date</label>
         <input type="date" name="birth_date" required
-          style="width:100%; padding:9px 12px; border:1px solid #d1d5db; border-radius:6px; font-size:13px; color:#111; box-sizing:border-box; outline:none;"
-          onfocus="this.style.borderColor='#2563eb'" onblur="this.style.borderColor='#d1d5db'" />
+          style="width:100%; padding:9px 12px; border:1px solid #f9a8d4; border-radius:6px; font-size:13px; color:#111; box-sizing:border-box; outline:none;"
+          onfocus="this.style.borderColor='#ec4899'" onblur="this.style.borderColor='#f9a8d4'" />
       </div>
 
       <!-- Password -->
       <div>
         <label style="display:block; font-size:13px; font-weight:500; color:#374151; margin-bottom:6px;">Password</label>
         <input type="password" name="password" id="password" required
-          style="width:100%; padding:9px 12px; border:1px solid #d1d5db; border-radius:6px; font-size:13px; color:#111; box-sizing:border-box; outline:none;"
-          onfocus="this.style.borderColor='#2563eb'" onblur="this.style.borderColor='#d1d5db'" />
-      </div>
-
-      <!-- Address (full width) -->
-      <div style="grid-column: span 2;">
-        <label style="display:block; font-size:13px; font-weight:500; color:#374151; margin-bottom:6px;">Address</label>
-        <input type="text" name="address" required
-          style="width:100%; padding:9px 12px; border:1px solid #d1d5db; border-radius:6px; font-size:13px; color:#111; box-sizing:border-box; outline:none;"
-          onfocus="this.style.borderColor='#2563eb'" onblur="this.style.borderColor='#d1d5db'" />
+          style="width:100%; padding:9px 12px; border:1px solid #f9a8d4; border-radius:6px; font-size:13px; color:#111; box-sizing:border-box; outline:none;"
+          onfocus="this.style.borderColor='#ec4899'" onblur="this.style.borderColor='#f9a8d4'" />
       </div>
 
       <!-- Contact Number -->
       <div>
         <label style="display:block; font-size:13px; font-weight:500; color:#374151; margin-bottom:6px;">Contact Number</label>
-        <input type="text" name="contact_number" required
-          style="width:100%; padding:9px 12px; border:1px solid #d1d5db; border-radius:6px; font-size:13px; color:#111; box-sizing:border-box; outline:none;"
-          onfocus="this.style.borderColor='#2563eb'" onblur="this.style.borderColor='#d1d5db'" />
+        <input type="text" name="contact_number" required maxlength="11" pattern="[0-9]*"
+          style="width:100%; padding:9px 12px; border:1px solid #f9a8d4; border-radius:6px; font-size:13px; color:#111; box-sizing:border-box; outline:none;"
+          onfocus="this.style.borderColor='#ec4899'" onblur="this.style.borderColor='#f9a8d4'"
+          oninput="this.value=this.value.replace(/[^0-9]/g,'')" />
       </div>
 
       <!-- Confirm Password -->
       <div>
         <label style="display:block; font-size:13px; font-weight:500; color:#374151; margin-bottom:6px;">Confirm Password</label>
         <input type="password" name="confirm_password" id="confirm_password" required
-          style="width:100%; padding:9px 12px; border:1px solid #d1d5db; border-radius:6px; font-size:13px; color:#111; box-sizing:border-box; outline:none;"
-          onfocus="this.style.borderColor='#2563eb'" onblur="this.style.borderColor='#d1d5db'" />
+          style="width:100%; padding:9px 12px; border:1px solid #f9a8d4; border-radius:6px; font-size:13px; color:#111; box-sizing:border-box; outline:none;"
+          onfocus="this.style.borderColor='#ec4899'" onblur="this.style.borderColor='#f9a8d4'" />
+      </div>
+
+      <!-- Address full width at bottom -->
+      <div style="grid-column: span 2;">
+        <label style="display:block; font-size:13px; font-weight:500; color:#374151; margin-bottom:6px;">Address</label>
+        <input type="text" name="address" required
+          style="width:100%; padding:9px 12px; border:1px solid #f9a8d4; border-radius:6px; font-size:13px; color:#111; box-sizing:border-box; outline:none;"
+          onfocus="this.style.borderColor='#ec4899'" onblur="this.style.borderColor='#f9a8d4'" />
       </div>
 
     </div>
 
-    <!-- Buttons -->
-    <div style="margin-top:28px; display:flex; gap:10px;">
-      <button type="submit"
-        style="background:#16a34a; color:#fff; padding:9px 24px; border:none; border-radius:6px; font-size:13px; font-weight:600; cursor:pointer;">
-        Save User
-      </button>
-      <a href="{% url 'user_list' %}"
-        style="background:#e5e7eb; color:#374151; padding:9px 24px; border-radius:6px; font-size:13px; font-weight:600; text-decoration:none;">
-        Cancel
-      </a>
-    </div>
+     <!-- Buttons -->
+  <div style="margin-top:28px; display:flex; gap:10px;">
+    <button type="submit"
+      style="background:#ec4899; color:#fff; padding:9px 24px; border:none; border-radius:6px; font-size:13px; font-weight:600; cursor:pointer; transition: background 0.2s;"
+      onmouseover="this.style.background='#db2777'"
+      onmouseout="this.style.background='#ec4899'">
+      Save User
+    </button>
+    <a href="{% url 'user_list' %}"
+      style="background:#e5e7eb; color:#374151; padding:9px 24px; border-radius:6px; font-size:13px; font-weight:600; text-decoration:none; transition: background 0.2s;"
+      onmouseover="this.style.background='#d1d5db'; this.style.color='#111827';"
+      onmouseout="this.style.background='#e5e7eb'; this.style.color='#374151';">
+      Cancel
+    </a>
+  </div>
+
 
   </form>
 </div>
 
 <script>
-  document.querySelector('form').addEventListener('submit', function(e) {
-    const pw = document.getElementById('password').value;
-    const cpw = document.getElementById('confirm_password').value;
-    if (pw !== cpw) {
+  // Show selected filename
+  document.getElementById('profile_picture').addEventListener('change', function () {
+    const file = this.files[0];
+    const fileNameEl = document.getElementById('fileName');
+    if (!file) return;
+    fileNameEl.textContent = '📎 ' + file.name;
+    fileNameEl.style.color = '#ec4899';
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      const preview     = document.getElementById('avatarPreview');
+      const placeholder = document.getElementById('avatarPlaceholder');
+      preview.src           = e.target.result;
+      preview.style.display = 'block';
+      if (placeholder) placeholder.style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+  });
+
+  // Username check
+  const usernameInput = document.querySelector('input[name="username"]');
+  let usernameMsg = document.createElement('p');
+  usernameMsg.style.cssText = 'font-size:12px; margin-top:4px;';
+  usernameInput.parentNode.appendChild(usernameMsg);
+
+  usernameInput.addEventListener('blur', function () {
+    const val = this.value.trim();
+    if (!val) return;
+    fetch(`/user/check-username?username=${encodeURIComponent(val)}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.exists) {
+          usernameMsg.textContent = '⚠️ Username already exists!';
+          usernameMsg.style.color = '#dc2626';
+          usernameInput.style.borderColor = '#dc2626';
+        } else {
+          usernameMsg.textContent = '✓ Username is available';
+          usernameMsg.style.color = '#16a34a';
+          usernameInput.style.borderColor = '#16a34a';
+        }
+      });
+  });
+
+  usernameInput.addEventListener('input', function () {
+    usernameMsg.textContent = '';
+    usernameInput.style.borderColor = '#f9a8d4';
+  });
+
+  // Password match check
+  const passwordInput = document.getElementById('password');
+  const confirmInput = document.getElementById('confirm_password');
+
+  let passwordMsg = document.createElement('p');
+  passwordMsg.style.cssText = 'font-size:12px; margin-top:4px;';
+  confirmInput.parentNode.appendChild(passwordMsg);
+
+  confirmInput.addEventListener('input', function () {
+    if (!confirmInput.value) {
+      passwordMsg.textContent = '';
+      confirmInput.style.borderColor = '#f9a8d4';
+      return;
+    }
+    if (passwordInput.value === confirmInput.value) {
+      passwordMsg.textContent = '✓ Passwords match';
+      passwordMsg.style.color = '#16a34a';
+      confirmInput.style.borderColor = '#16a34a';
+    } else {
+      passwordMsg.textContent = '⚠️ Passwords do not match!';
+      passwordMsg.style.color = '#dc2626';
+      confirmInput.style.borderColor = '#dc2626';
+    }
+  });
+
+  passwordInput.addEventListener('input', function () {
+    if (confirmInput.value) {
+      confirmInput.dispatchEvent(new Event('input'));
+    }
+  });
+
+  // Block submit
+  document.querySelector('form').addEventListener('submit', function (e) {
+    if (usernameMsg.style.color === 'rgb(220, 38, 38)') {
       e.preventDefault();
-      alert('Passwords do not match!');
+      alert('Username already exists! Please choose another.');
+      return;
+    }
+    if (passwordInput.value !== confirmInput.value) {
+      e.preventDefault();
+      passwordMsg.textContent = '⚠️ Passwords do not match!';
+      passwordMsg.style.color = '#dc2626';
+      confirmInput.style.borderColor = '#dc2626';
     }
   });
 </script>

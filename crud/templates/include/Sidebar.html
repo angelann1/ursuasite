@@ -1,19 +1,18 @@
-<aside id="sidebar" class="fixed top-0 left-0 z-40 w-64 h-screen pt-16 bg-white border-r border-gray-200 shadow-sm transition-transform -translate-x-full sm:translate-x-0">
-    <div class="flex flex-col h-full px-3 py-4 overflow-y-auto bg-white">
+<aside id="sidebar" class="fixed top-0 left-0 z-40 w-64 h-screen pt-16 hover:bg-[#DEA6A1] border-r border-gray-200 shadow-sm transition-transform -translate-x-full sm:translate-x-0">
+    <div class="flex flex-col h-full px-3 py-4 overflow-y-auto bg-white mr-2">
 
         <!-- Logo -->
         <div class="flex items-center gap-3 px-3 mb-6 mt-1">
             <div class="flex items-center justify-center w-10 h-10 rounded-full bg-blue-600 text-white font-bold text-lg shadow">
-                F
             </div>
-            <span class="text-base font-bold text-gray-800">Flowbite</span>
+            <span class="text-base font-bold text-[#F9F0EF]">COBOL</span>
         </div>
 
         <!-- Gender Section -->
         <p class="px-3 mb-1 text-xs font-semibold text-gray-400 uppercase tracking-wider">Gender</p>
         <ul class="space-y-1 mb-4">
             <li>
-               href="{% url 'gender_list' %}"
+               <a href="{% url 'gender_list' %}"
                    style="display:block; padding:10px 16px; border-radius:8px; text-decoration:none; color:#374151; font-weight:500;"
                    onmouseover="this.style.background='#EFF6FF'; this.style.color='#1D4ED8';"
                    onmouseout="this.style.background=''; this.style.color='#374151';">
@@ -26,7 +25,7 @@
                 </a>
             </li>
             <li>
-                href="{% url 'add_gender' %}"
+                <a href="{% url 'add_gender' %}"
                    style="display:block; padding:10px 16px; border-radius:8px; text-decoration:none; color:#374151; font-weight:500;"
                    onmouseover="this.style.background='#EFF6FF'; this.style.color='#1D4ED8';"
                    onmouseout="this.style.background=''; this.style.color='#374151';">

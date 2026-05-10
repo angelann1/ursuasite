@@ -1,14 +1,14 @@
-<nav class="fixed top-0 z-30 w-full bg-white border-b border-gray-200">
+{% load static %}
+
+<nav class="fixed top-0 z-30 w-full bg-[#CDB4DB] border-b border-gray-200">
     <div class="px-3 py-3 lg:px-5 lg:pl-3">
         <div class="flex items-center justify-between">
             <div class="flex items-center justify-start">
                 <a href="/" class="flex ms-2 md:me-24">
-                    <div class="bg-blue-600 rounded-full p-1 me-3 flex items-center justify-center">
-                        <svg class="w-5 h-5 text-white fill-current" viewBox="0 0 24 24">
-                            <path d="M8 5v14l11-7z" />
-                        </svg>
-                    </div>
-                    <span class="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap">Flowbite</span>
+                    <img src="{% static 'images/logo.png' %}" 
+                    alt="COBOL Logo" 
+                    style="width: 42px; height: 42px; border-radius: 50%; object-fit: cover; margin-right: 10px;">
+                    <span class="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap text-[#fffff]">COBOL</span>
                 </a>
             </div>
             <div class="flex items-center">

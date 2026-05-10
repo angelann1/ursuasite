@@ -5,6 +5,7 @@ from django.contrib import messages
 from .models import Genders
 from .models import Genders, Users
 from django.contrib.auth.hashers import make_password
+from django.http import JsonResponse
 
 def gender_list(request):
     try:
@@ -79,12 +80,16 @@ def add_user(request):
             confirm_password = request.POST.get('confirm_password')
             address = request.POST.get('address')
             contact_number = request.POST.get('contact_number')
+            profile_picture  = request.FILES.get('profile_picture')
+
+            
 
             if password != confirm_password:
                 messages.error(request, 'Passwords do not match.')
                 return render(request, 'user/AddUser.html', {'genders': genders})
 
             gender_obj = Genders.objects.get(gender_id=gender_id)
+
             Users.objects.create(
                 full_name=full_name,
                 email=email,
@@ -94,6 +99,8 @@ def add_user(request):
                 password=make_password(password), 
                 address=address,
                 contact_number=contact_number,
+                profile_picture = profile_picture,
+                
             )
             messages.success(request, 'User added successfully!')
             return redirect('/user/list')
@@ -105,6 +112,7 @@ def edit_user(request, pk):
     try:
         user_obj = Users.objects.get(user_id=pk)
         genders = Genders.objects.all().order_by('gender')
+       
         if request.method == 'POST':
             user_obj.full_name = request.POST.get('full_name')
             user_obj.email = request.POST.get('email')
@@ -114,6 +122,10 @@ def edit_user(request, pk):
             user_obj.birth_date = request.POST.get('birth_date')
             user_obj.address = request.POST.get('address')
             user_obj.contact_number = request.POST.get('contact_number')
+            
+            new_picture = request.FILES.get('profile_picture')
+            if new_picture:
+                user_obj.profile_picture = new_picture             # only replace if new one provided
 
             new_password = request.POST.get('password')
             confirm_password = request.POST.get('confirm_password')
@@ -141,3 +153,13 @@ def delete_user(request, pk):
         return render(request, 'user/DeleteUser.html', {'user': user_obj})
     except Exception as e:
         return HttpResponse(f"Error occurred during delete user: {e}")
+    
+def check_username(request):
+    username = request.GET.get('username', '')
+    exists = Users.objects.filter(username=username).exists()
+    return JsonResponse({'exists': exists})
+
+# def check_email(request):
+#     email = request.GET.get('email', '')
+#     exists = Users.object.filter(email = email).exists()
+#     return JsonResponse({'exists': exists})

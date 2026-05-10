@@ -1,18 +1,19 @@
-
 {% extends "layout/base.html" %}
 {% block title %}Gender List{% endblock %}
 
 {% block content %}
+<div class="min-h-screen bg-gradient-to-br p-6 rounded-xl">
+
 <div class="mb-4 flex items-center justify-between">
-    <h2 class="text-xl font-semibold text-gray-800">Gender List</h2>
-    <a href="/gender/add" class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition">
+    <h2 class="text-xl font-semibold text-pink-500">Gender List</h2>
+    <a href="/gender/add" class="px-4 py-2 bg-gradient-to-r from-pink-400 to-purple-400 text-white text-sm font-medium rounded-lg hover:from-pink-500 hover:to-purple-500 transition">
         + Add Gender
     </a>
 </div>
 
 <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
     <table class="w-full text-sm text-left text-gray-500">
-        <thead class="text-xs text-white uppercase bg-blue-600">
+        <thead class="text-xs text-white uppercase bg-gradient-to-r from-pink-400 to-purple-400">
             <tr>
                 <th scope="col" class="px-6 py-3">#</th>
                 <th scope="col" class="px-6 py-3">Gender</th>
@@ -22,27 +23,31 @@
         </thead>
         <tbody>
             {% for g in genders %}
-            <tr class="{% cycle 'bg-white' 'bg-gray-50' %} border-b border-gray-100 hover:bg-blue-50 transition">
-                <td class="px-6 py-4 text-gray-500">{{ forloop.counter }}</td>
-                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+            <tr class="bg-white border-b border-pink-100 hover:bg-pink-50 transition">
+                <td class="px-6 py-4 text-gray-400">{{ forloop.counter }}</td>
+                <th scope="row" class="px-6 py-4 font-medium text-gray-800 whitespace-nowrap">
                     {{ g.gender }}
                 </th>
-                <td class="px-6 py-4 text-gray-500">{{ g.created_at|date:"M d, Y" }}</td>
+                <td class="px-6 py-4 text-gray-400">{{ g.created_at|date:"M d, Y" }}</td>
                 <td class="px-6 py-4 flex gap-2">
-                    <a href="/gender/edit/{{ g.gender_id }}" class="px-3 py-1.5 text-xs font-medium text-white bg-yellow-400 rounded-lg hover:bg-yellow-500 transition">
+                    <a href="/gender/edit/{{ g.gender_id }}"
+                        class="px-3 py-1.5 text-xs font-medium text-white bg-green-400 rounded-lg hover:bg-pink-500 transition">
                         Edit
-                   <a href="/gender/delete/{{ g.gender_id }}"
-    class="px-3 py-1.5 text-xs font-medium text-white bg-red-500 rounded-lg hover:bg-red-600 transition">
-    Delete
-</a>
+                    </a>
+                    <a href="/gender/delete/{{ g.gender_id }}"
+                        class="px-3 py-1.5 text-xs font-medium text-white bg-red-500 rounded-lg hover:bg-purple-600 transition">
+                        Delete
+                    </a>
                 </td>
             </tr>
             {% empty %}
             <tr>
-                <td colspan="4" class="px-6 py-8 text-center text-gray-400">No genders found. <a href="/gender/add" class="text-blue-600 underline">Add one</a>.</td>
+                <td colspan="4" class="px-6 py-8 text-center text-pink-300">No genders found. <a href="/gender/add" class="text-pink-500 underline">Add one</a>.</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
+</div>
+
 </div>
 {% endblock %}
