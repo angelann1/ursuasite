@@ -20,7 +20,7 @@ class Users (models.Model):
     birth_date = models.DateField(blank=False) # birth_date DATE NOT NULL
     address = models.CharField(max_length=255, blank=False) # address VARCHAR(255) NOT NULL
     contact_number = models.CharField(max_length=11, blank=False, validators=[RegexValidator(regex=r'^\d{11}$')]) # contact_number VARCHAR(20) NOT NULL   
-    email = models.EmailField(max_length=255, blank=True) # email VARCHAR(255) DEFAULT NULL
+    email = models.EmailField(max_length=255, blank=False) # email VARCHAR(255) DEFAULT NULL
     username = models.CharField(max_length=255, blank=False, unique=True) # username VARCHAR(255) NOT NULL UNIQUE
     profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
     password = models.CharField(max_length=255, blank=False) # password VARCHAR(255) NOT NULL

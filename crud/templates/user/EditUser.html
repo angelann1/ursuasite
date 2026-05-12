@@ -51,7 +51,7 @@
       <!-- Email -->
       <div>
         <label style="display:block; font-size:13px; font-weight:500; color:#374151; margin-bottom:6px;">Email</label>
-        <input type="email" name="email" value="{{ user.email }}"
+        <input type="email" name="email" value="{{ user.email }}" required
           style="width:100%; padding:9px 12px; border:1px solid #f9a8d4; border-radius:6px; font-size:13px; color:#111; box-sizing:border-box; outline:none;"
           onfocus="this.style.borderColor='#ec4899'" onblur="this.style.borderColor='#f9a8d4'" />
       </div>
@@ -149,7 +149,7 @@
   </form>
 </div>
 
-<script>
+  <script>
   // Show selected filename
   document.getElementById('profile_picture').addEventListener('change', function () {
     const file = this.files[0];
@@ -178,7 +178,11 @@
   usernameInput.addEventListener('blur', function () {
     const val = this.value.trim();
     const currentUsername = "{{ user.username }}";
-    if (!val || val === currentUsername) return;
+    if (!val || val === currentUsername) {
+      usernameMsg.textContent = '';
+      usernameInput.style.borderColor = '#f9a8d4';
+      return;
+    }
     fetch(`/user/check-username?username=${encodeURIComponent(val)}`)
       .then(res => res.json())
       .then(data => {
@@ -197,6 +201,40 @@
   usernameInput.addEventListener('input', function () {
     usernameMsg.textContent = '';
     usernameInput.style.borderColor = '#f9a8d4';
+  });
+
+  // Email check
+  const emailInput = document.querySelector('input[name="email"]');
+  let emailMsg = document.createElement('p');
+  emailMsg.style.cssText = 'font-size:12px; margin-top:4px;';
+  emailInput.parentNode.appendChild(emailMsg);
+
+  emailInput.addEventListener('blur', function () {
+    const val = this.value.trim();
+    const currentEmail = "{{ user.email }}";
+    if (!val || val === currentEmail) {
+      emailMsg.textContent = '';
+      emailInput.style.borderColor = '#f9a8d4';
+      return;
+    }
+    fetch(`/user/check-email?email=${encodeURIComponent(val)}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.exists) {
+          emailMsg.textContent = '⚠️ Email already exists!';
+          emailMsg.style.color = '#dc2626';
+          emailInput.style.borderColor = '#dc2626';
+        } else {
+          emailMsg.textContent = '✓ Email is available';
+          emailMsg.style.color = '#16a34a';
+          emailInput.style.borderColor = '#16a34a';
+        }
+      });
+  });
+
+  emailInput.addEventListener('input', function () {
+    emailMsg.textContent = '';
+    emailInput.style.borderColor = '#f9a8d4';
   });
 
   // Password checker
@@ -230,21 +268,113 @@
     }
   });
 
-  // Block submit
-  document.querySelector('form').addEventListener('submit', function (e) {
-    if (usernameMsg.style.color === 'rgb(220, 38, 38)') {
-      e.preventDefault();
-      alert('Username already exists! Please choose another.');
-      return;
+  // Block submit — fetch on submit to double-check
+  document.querySelector('form').addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    const currentUsername = "{{ user.username }}";
+    const currentEmail = "{{ user.email }}";
+    const usernameVal = usernameInput.value.trim();
+    const emailVal = emailInput.value.trim();
+
+    // Check email if changed
+    if (emailVal && emailVal !== currentEmail) {
+      const emailRes = await fetch(`/user/check-email?email=${encodeURIComponent(emailVal)}`);
+      const emailData = await emailRes.json();
+      if (emailData.exists) {
+        emailMsg.textContent = '⚠️ Email already exists!';
+        emailMsg.style.color = '#dc2626';
+        emailInput.style.borderColor = '#dc2626';
+        showGirlyAlert('The email address you entered is already registered.');
+        return;
+      }
     }
+
+    // Check username if changed
+    if (usernameVal && usernameVal !== currentUsername) {
+      const usernameRes = await fetch(`/user/check-username?username=${encodeURIComponent(usernameVal)}`);
+      const usernameData = await usernameRes.json();
+      if (usernameData.exists) {
+        usernameMsg.textContent = '⚠️ Username already exists!';
+        usernameMsg.style.color = '#dc2626';
+        usernameInput.style.borderColor = '#dc2626';
+        showGirlyAlert('The username you entered is already taken.');
+        return;
+      }
+    }
+
+    // Check passwords
     const pw = passwordInput.value;
     const cpw = confirmInput.value;
     if (pw && pw !== cpw) {
-      e.preventDefault();
       passwordMsg.textContent = '⚠️ Passwords do not match!';
       passwordMsg.style.color = '#dc2626';
       confirmInput.style.borderColor = '#dc2626';
+      return;
     }
+
+    // All good — submit
+    this.submit();
   });
+
+  function showGirlyAlert(message) {
+    const existing = document.getElementById('girly-alert-overlay');
+    if (existing) existing.remove();
+
+    const overlay = document.createElement('div');
+    overlay.id = 'girly-alert-overlay';
+    overlay.style.cssText = `
+        position:fixed; inset:0; background:rgba(0,0,0,0.3);
+        display:flex; align-items:center; justify-content:center;
+        z-index:9999; backdrop-filter:blur(4px);
+    `;
+
+    overlay.innerHTML = `
+        <div style="
+            background: linear-gradient(135deg, #fff0f6, #fce4ec);
+            border: 2px solid #f48fb1;
+            border-radius: 20px;
+            padding: 32px 36px;
+            max-width: 360px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(236,72,153,0.2);
+            animation: popIn 0.3s ease;
+        ">
+            <div style="font-size:40px; margin-bottom:12px;">🌸</div>
+            <h3 style="
+                color: #ec4899;
+                font-size: 16px;
+                font-weight: 700;
+                margin-bottom: 10px;
+            ">Notice</h3>
+            <p style="
+                color: #9d174d;
+                font-size: 13.5px;
+                margin-bottom: 24px;
+                line-height: 1.5;
+            ">${message}</p>
+            <button onclick="document.getElementById('girly-alert-overlay').remove()" style="
+                background: linear-gradient(to right, #f472b6, #ec4899);
+                color: #fff;
+                border: none;
+                border-radius: 30px;
+                padding: 10px 32px;
+                font-size: 13px;
+                font-weight: 600;
+                cursor: pointer;
+                box-shadow: 0 4px 12px rgba(236,72,153,0.3);
+            ">OK</button>
+        </div>
+        <style>
+            @keyframes popIn {
+                from { transform: scale(0.8); opacity: 0; }
+                to   { transform: scale(1); opacity: 1; }
+            }
+        </style>
+    `;
+
+    document.body.appendChild(overlay);
+}
 </script>
 {% endblock %}

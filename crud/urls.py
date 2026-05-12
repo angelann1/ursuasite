@@ -17,6 +17,7 @@ urlpatterns = [
     path('user/edit/<int:pk>', views.edit_user, name='edit_user'), 
     path('user/delete/<int:pk>', views.delete_user, name='delete_user'),
     path('user/check-username', views.check_username, name='check_username'),
+    path('user/check-email', views.check_email, name='check_email'),
     
     # With slash (for browser auto-redirect)
     path('gender/list/', views.gender_list),

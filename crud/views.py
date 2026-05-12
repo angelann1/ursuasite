@@ -6,6 +6,7 @@ from .models import Genders
 from .models import Genders, Users
 from django.contrib.auth.hashers import make_password
 from django.http import JsonResponse
+from datetime import datetime
 
 def gender_list(request):
     try:
@@ -122,6 +123,17 @@ def edit_user(request, pk):
             user_obj.birth_date = request.POST.get('birth_date')
             user_obj.address = request.POST.get('address')
             user_obj.contact_number = request.POST.get('contact_number')
+
+            birth_date_str = request.POST.get('birth_date', '').strip()
+            if not birth_date_str:
+                messages.error(request, 'Birth date is required.')
+                return render(request, 'user/EditUser.html', {'user': user_obj, 'genders': genders})
+
+            try:
+                user_obj.birth_date = datetime.strptime(birth_date_str, '%Y-%m-%d').date()
+            except ValueError:
+                messages.error(request, 'Invalid birth date. Please use the date picker.')
+                return render(request, 'user/EditUser.html', {'user': user_obj, 'genders': genders})
             
             new_picture = request.FILES.get('profile_picture')
             if new_picture:
@@ -134,6 +146,8 @@ def edit_user(request, pk):
                     messages.error(request, 'Passwords do not match.')
                     return render(request, 'user/EditUser.html', {'user': user_obj, 'genders': genders})
                 user_obj.password = make_password(new_password)
+
+            
 
             user_obj.save()
             messages.success(request, 'User updated successfully!')
@@ -159,7 +173,7 @@ def check_username(request):
     exists = Users.objects.filter(username=username).exists()
     return JsonResponse({'exists': exists})
 
-# def check_email(request):
-#     email = request.GET.get('email', '')
-#     exists = Users.object.filter(email = email).exists()
-#     return JsonResponse({'exists': exists})
+def check_email(request):
+    email = request.GET.get('email', '')
+    exists = Users.objects.filter(email=email).exists()
+    return JsonResponse({'exists': exists})

@@ -1,4 +1,3 @@
-
 {% extends "layout/base.html" %}
 {% block title %}Add Gender{% endblock %}
 
@@ -9,9 +8,9 @@
         {% csrf_token %}
         <div class="mb-4">
             <label for="gender" class="block mb-2 text-sm font-medium text-gray-700">Gender Name</label>
-            <input type="text" id="gender" name="gender"
+                <input type="text" id="gender" name="gender" oninput="this.value = this.value.replace(/[0-9]/g, '')"
                 class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 outline-none transition"
-                placeholder="e.g. Male" required>
+                required>
         </div>
         <div class="flex justify-between items-center">
             <a href="/gender/list" class="text-sm text-gray-500 hover:underline">← Back to list</a>
